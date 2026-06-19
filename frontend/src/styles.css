@@ -290,11 +290,13 @@
   }
 
   /* Tabs Styling */
-  [data-slot='tabs-trigger'][data-state='active'] {
+  [data-slot='tabs-list'][data-variant='default']
+    [data-slot='tabs-trigger'][data-state='active'] {
     background-color: oklch(0.97 0 0) !important;
     color: oklch(0.09 0 0) !important;
     border-color: oklch(0.97 0 0) !important;
   }
+
   /* Sonner */
   [data-sonner-toast] {
     color: white !important;
