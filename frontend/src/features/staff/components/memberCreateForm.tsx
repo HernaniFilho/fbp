@@ -15,7 +15,6 @@ import {
   PARANORMAL_EVENT_TYPE,
   PARANORMAL_EVENT_TYPE_LABELS,
 } from '../schemas/staff'
-import { Label } from '#/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -35,7 +34,6 @@ import {
   FieldSeparator,
   FieldSet,
 } from '#/components/ui/field'
-import { Switch } from '#/components/ui/switch'
 import { Checkbox } from '#/components/ui/checkbox'
 import { Button } from '#/components/ui/button'
 
@@ -571,12 +569,19 @@ export default function MemberCreateForm() {
           </form.Subscribe>
         </FieldGroup>
       </FieldSet>
-      <Button
-        type="submit"
-        className="rounded-none bg-destructive hover:bg-destructive/80"
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting]}
       >
-        Submit
-      </Button>
+        {([canSubmit, isSubmitting]) => (
+          <Button
+            type="submit"
+            disabled={!canSubmit}
+            className="rounded-none bg-destructive hover:bg-destructive/80"
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+          </Button>
+        )}
+      </form.Subscribe>
     </form>
   )
 }

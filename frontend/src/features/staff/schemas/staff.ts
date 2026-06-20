@@ -9,7 +9,7 @@ export const SEX_LABELS: Record<Sex, string> = {
   other: 'Other',
 }
 export const AGE_SPECIAL_VALUES = ['n/a', 'inf'] as const
-export const AGE = z.union([z.number().min(0), z.enum(AGE_SPECIAL_VALUES)])
+export const AGE = z.union([z.number().min(18), z.enum(AGE_SPECIAL_VALUES)])
 export type Age = z.infer<typeof AGE>
 export const AGE_SPECIAL_LABELS: Record<
   (typeof AGE_SPECIAL_VALUES)[number],
