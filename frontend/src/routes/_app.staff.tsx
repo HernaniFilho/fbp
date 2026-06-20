@@ -1,4 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from '#/components/ui/tabs'
+import MemberCreateForm from '#/features/staff/components/memberCreateForm'
 import { useIsMobile } from '#/hooks/use-mobile'
 import { createFileRoute } from '@tanstack/react-router'
 import { Activity, useState } from 'react'
@@ -29,7 +30,7 @@ function Staff() {
           <h1>You are viewing all staff</h1>
         </Activity>
         <Activity mode={currentTab === 'register' ? 'visible' : 'hidden'}>
-          <h1>You are registering a new staff member</h1>
+          <MemberCreateForm />
         </Activity>
       </div>
     </div>
