@@ -15,8 +15,10 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = ""
     DATABASE_URL: str = ""
 
-    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:5173"]
-    API_V1_STR: str = "/api/v1"
+    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    CORS_METHODS: list[str] = ["*"]
+    CORS_HEADERS: list[str] = ["*"]
+    API_V1_STR: str = "/api"
 
 
 settings = Settings()  # type: ignore
