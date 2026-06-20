@@ -10,6 +10,10 @@ import {
   SEX_LABELS,
   AGE_SPECIAL_VALUES,
   AGE_SPECIAL_LABELS,
+  HANDEDNESS,
+  HANDEDNESS_LABELS,
+  PARANORMAL_EVENT_TYPE,
+  PARANORMAL_EVENT_TYPE_LABELS,
 } from '../schemas/staff'
 import { Label } from '#/components/ui/label'
 import {
@@ -28,8 +32,12 @@ import {
   FieldGroup,
   FieldLabel,
   FieldLegend,
+  FieldSeparator,
   FieldSet,
 } from '#/components/ui/field'
+import { Switch } from '#/components/ui/switch'
+import { Checkbox } from '#/components/ui/checkbox'
+import { Button } from '#/components/ui/button'
 
 const defaultMember: MemberCreate = {
   name: '',
@@ -64,7 +72,7 @@ export default function MemberCreateForm() {
         e.stopPropagation()
         form.handleSubmit()
       }}
-      className="flex flex-col gap-4"
+      className="flex flex-col mb-4 gap-4"
     >
       {/* ---- Biological ---- */}
       <FieldSet>
@@ -86,10 +94,12 @@ export default function MemberCreateForm() {
                   <Input
                     id={field.name}
                     name={field.name}
+                    placeholder="Name of staff member"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
                     aria-invalid={isInvalid}
+                    className="rounded-none"
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
@@ -97,94 +107,188 @@ export default function MemberCreateForm() {
             }}
           </form.Field>
 
-          {/* sex */}
-          <form.Field name="sex">
-            {(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid
-              return (
-                <Field orientation="responsive" data-invalid={isInvalid}>
-                  <FieldContent>
-                    <FieldLabel htmlFor={field.name}>Sex</FieldLabel>
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </FieldContent>
-                  <Select
-                    value={field.state.value}
-                    onValueChange={(value) => field.handleChange(value as Sex)}
-                  >
-                    <SelectTrigger
-                      id={field.name}
-                      onBlur={field.handleBlur}
-                      aria-invalid={isInvalid}
-                      className="min-w-30"
-                    >
-                      <SelectValue placeholder="Select one..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SEX.options.map((value) => (
-                        <SelectItem key={value} value={value}>
-                          {SEX_LABELS[value]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-              )
-            }}
-          </form.Field>
-
-          {/* age */}
-          <form.Field name="age">
-            {(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid
-              const value = field.state.value
-              const mode = typeof value === 'number' ? 'number' : value
-
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Age</FieldLabel>
-                  <div className="flex flex-row gap-2">
+          {/* Sex, Age, Handedness */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* sex */}
+            <form.Field name="sex">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldContent>
+                      <FieldLabel htmlFor={field.name}>Sex</FieldLabel>
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </FieldContent>
                     <Select
-                      value={mode}
-                      onValueChange={(newMode) => {
-                        if (newMode === 'number') {
-                          field.handleChange(0)
-                        } else {
-                          field.handleChange(newMode as 'n/a' | 'inf')
-                        }
-                      }}
+                      value={field.state.value}
+                      onValueChange={(value) =>
+                        field.handleChange(value as Sex)
+                      }
                     >
-                      <SelectTrigger>
-                        <SelectValue />
+                      <SelectTrigger
+                        id={field.name}
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                        className="min-w-30 rounded-none"
+                      >
+                        <SelectValue placeholder="Select one..." />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="number">Number</SelectItem>
-                        {AGE_SPECIAL_VALUES.map((special) => (
-                          <SelectItem key={special} value={special}>
-                            {AGE_SPECIAL_LABELS[special]}
+                      <SelectContent className="rounded-none">
+                        {SEX.options.map((value) => (
+                          <SelectItem
+                            key={value}
+                            value={value}
+                            className="rounded-none"
+                          >
+                            {SEX_LABELS[value]}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                  </Field>
+                )
+              }}
+            </form.Field>
 
-                    {mode === 'number' && (
-                      <Input
+            {/* age */}
+            <form.Field name="age">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                const value = field.state.value
+                const mode = typeof value === 'number' ? 'number' : value
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldContent>
+                      <FieldLabel htmlFor={field.name}>Age</FieldLabel>
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </FieldContent>
+                    <div className="flex flex-row gap-2">
+                      <Select
+                        value={mode}
+                        onValueChange={(newMode) => {
+                          if (newMode === 'number') {
+                            field.handleChange(0)
+                          } else {
+                            field.handleChange(newMode as 'n/a' | 'inf')
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="rounded-none">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-none">
+                          <SelectItem value="number" className="rounded-none">
+                            Number
+                          </SelectItem>
+                          {AGE_SPECIAL_VALUES.map((special) => (
+                            <SelectItem
+                              key={special}
+                              value={special}
+                              className="rounded-none"
+                            >
+                              {AGE_SPECIAL_LABELS[special]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {mode === 'number' && (
+                        <Input
+                          id={field.name}
+                          type="number"
+                          min={0}
+                          value={value}
+                          onChange={(e) =>
+                            field.handleChange(Number(e.target.value))
+                          }
+                          onBlur={field.handleBlur}
+                          aria-invalid={isInvalid}
+                          className="rounded-none"
+                        />
+                      )}
+                    </div>
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            {/** Handedness */}
+            <form.Field name="handedness">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldContent>
+                      <FieldLabel htmlFor={field.name}>Handedness</FieldLabel>
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </FieldContent>
+                    <Select
+                      value={field.state.value}
+                      onValueChange={(value) =>
+                        field.handleChange(value as Handedness)
+                      }
+                    >
+                      <SelectTrigger
                         id={field.name}
-                        type="number"
-                        min={0}
-                        value={value}
-                        onChange={(e) =>
-                          field.handleChange(Number(e.target.value))
-                        }
                         onBlur={field.handleBlur}
                         aria-invalid={isInvalid}
-                      />
+                        className="min-w-30 rounded-none"
+                      >
+                        <SelectValue placeholder="Select one..." />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-none">
+                        {HANDEDNESS.options.map((value) => (
+                          <SelectItem
+                            key={value}
+                            value={value}
+                            className="rounded-none"
+                          >
+                            {HANDEDNESS_LABELS[value]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )
+              }}
+            </form.Field>
+          </div>
+
+          {/** Paranormal Parent */}
+          <form.Field name="hasParanormalParent">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid
+              return (
+                <Field orientation="horizontal" data-invalid={isInvalid}>
+                  <Checkbox
+                    id={field.name}
+                    name={field.name}
+                    checked={field.state.value}
+                    onCheckedChange={(checked) =>
+                      field.handleChange(checked === true)
+                    }
+                    aria-invalid={isInvalid}
+                    className="rounded-none"
+                  />
+                  <FieldContent>
+                    <FieldLabel htmlFor={field.name}>
+                      Paranormal Parent
+                    </FieldLabel>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
                     )}
-                  </div>
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </FieldContent>
                 </Field>
               )
             }}
@@ -192,6 +296,7 @@ export default function MemberCreateForm() {
         </FieldGroup>
       </FieldSet>
 
+      <FieldSeparator />
       {/* ---- Exposure ---- */}
       <FieldSet>
         <FieldLegend className="text-destructive font-bold uppercase">
@@ -200,9 +305,75 @@ export default function MemberCreateForm() {
         <FieldDescription>
           Exposure information of the member on service
         </FieldDescription>
-        <FieldGroup>{/* TODO: exposure */}</FieldGroup>
+        <FieldGroup>
+          {/* Number of Missions, Service time */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Number of Missions */}
+            <form.Field name="numberOfMissions">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldContent>
+                      <FieldLabel htmlFor={field.name}>
+                        Number of Missions
+                      </FieldLabel>
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </FieldContent>
+                    <Input
+                      id={field.name}
+                      type="number"
+                      min={0}
+                      value={field.state.value}
+                      onChange={(e) =>
+                        field.handleChange(Number(e.target.value))
+                      }
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                      className="rounded-none"
+                    />
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            {/* Service time */}
+            <form.Field name="serviceTime">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldContent>
+                      <FieldLabel htmlFor={field.name}>Service time</FieldLabel>
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </FieldContent>
+                    <Input
+                      id={field.name}
+                      type="number"
+                      min={0}
+                      value={field.state.value}
+                      onChange={(e) =>
+                        field.handleChange(Number(e.target.value))
+                      }
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                      className="rounded-none"
+                    />
+                  </Field>
+                )
+              }}
+            </form.Field>
+          </div>
+        </FieldGroup>
       </FieldSet>
 
+      <FieldSeparator />
       {/* ---- Paranormal events ---- */}
       <FieldSet>
         <FieldLegend className="text-destructive font-bold uppercase">
@@ -211,8 +382,201 @@ export default function MemberCreateForm() {
         <FieldDescription>
           Paranormal events affecting the member
         </FieldDescription>
-        <FieldGroup>{/* TODO: paranormal events */}</FieldGroup>
+        <FieldGroup>
+          {/* Paranormal Level */}
+          <form.Field name="paranormalLevel">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldContent>
+                    <FieldLabel htmlFor={field.name}>
+                      Paranormal Level
+                    </FieldLabel>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </FieldContent>
+                  <Input
+                    id={field.name}
+                    type="number"
+                    min={0}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                    onBlur={field.handleBlur}
+                    aria-invalid={isInvalid}
+                    className="rounded-none"
+                  />
+                </Field>
+              )
+            }}
+          </form.Field>
+
+          {/* hadParanormalEvent */}
+          <form.Field name="hadParanormalEvent">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid
+              return (
+                <Field orientation="horizontal" data-invalid={isInvalid}>
+                  <Checkbox
+                    id={field.name}
+                    name={field.name}
+                    checked={field.state.value}
+                    onCheckedChange={(checked) => {
+                      field.handleChange(checked === true)
+                      // limpa os campos dependentes ao desmarcar
+                      if (!checked) {
+                        form.setFieldValue('ageOfFirstParanormalEvent', 0)
+                        form.setFieldValue('typeOfFirstParanormalEvent', 'n/a')
+                      }
+                    }}
+                    aria-invalid={isInvalid}
+                    className="rounded-none"
+                  />
+                  <FieldContent>
+                    <FieldLabel htmlFor={field.name}>
+                      Had Paranormal Event
+                    </FieldLabel>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </FieldContent>
+                </Field>
+              )
+            }}
+          </form.Field>
+
+          {/* campos liberados apenas se hadParanormalEvent === true */}
+          <form.Subscribe selector={(state) => state.values.hadParanormalEvent}>
+            {(hadParanormalEvent) =>
+              hadParanormalEvent && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+                  {/* ageOfFirstParanormalEvent */}
+                  <form.Field name="ageOfFirstParanormalEvent">
+                    {(field) => {
+                      const isInvalid =
+                        field.state.meta.isTouched && !field.state.meta.isValid
+                      const value = field.state.value
+                      const mode = typeof value === 'number' ? 'number' : value
+
+                      return (
+                        <Field data-invalid={isInvalid}>
+                          <FieldLabel htmlFor={field.name}>
+                            Age of First Event
+                          </FieldLabel>
+                          {isInvalid && (
+                            <FieldError errors={field.state.meta.errors} />
+                          )}
+                          <div className="flex flex-row gap-2">
+                            <Select
+                              value={mode}
+                              onValueChange={(newMode) => {
+                                if (newMode === 'number') {
+                                  field.handleChange(0)
+                                } else {
+                                  field.handleChange(newMode as 'n/a' | 'inf')
+                                }
+                              }}
+                            >
+                              <SelectTrigger className="rounded-none">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-none">
+                                <SelectItem
+                                  value="number"
+                                  className="rounded-none"
+                                >
+                                  Number
+                                </SelectItem>
+                                {AGE_SPECIAL_VALUES.map((special) => (
+                                  <SelectItem
+                                    key={special}
+                                    value={special}
+                                    className="rounded-none"
+                                  >
+                                    {AGE_SPECIAL_LABELS[special]}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            {mode === 'number' && (
+                              <Input
+                                id={field.name}
+                                type="number"
+                                min={0}
+                                value={value}
+                                onChange={(e) =>
+                                  field.handleChange(Number(e.target.value))
+                                }
+                                onBlur={field.handleBlur}
+                                aria-invalid={isInvalid}
+                                className="rounded-none"
+                              />
+                            )}
+                          </div>
+                        </Field>
+                      )
+                    }}
+                  </form.Field>
+
+                  {/* typeOfFirstParanormalEvent */}
+                  <form.Field name="typeOfFirstParanormalEvent">
+                    {(field) => {
+                      const isInvalid =
+                        field.state.meta.isTouched && !field.state.meta.isValid
+                      return (
+                        <Field data-invalid={isInvalid}>
+                          <FieldLabel htmlFor={field.name}>
+                            Type of First Event
+                          </FieldLabel>
+                          {isInvalid && (
+                            <FieldError errors={field.state.meta.errors} />
+                          )}
+                          <Select
+                            value={field.state.value}
+                            onValueChange={(value) =>
+                              field.handleChange(value as ParanormalEventType)
+                            }
+                          >
+                            <SelectTrigger
+                              id={field.name}
+                              onBlur={field.handleBlur}
+                              aria-invalid={isInvalid}
+                              className="rounded-none"
+                            >
+                              <SelectValue placeholder="Select one..." />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-none">
+                              {PARANORMAL_EVENT_TYPE.options.map((value) => (
+                                <SelectItem
+                                  key={value}
+                                  value={value}
+                                  className="rounded-none"
+                                >
+                                  {PARANORMAL_EVENT_TYPE_LABELS[value]}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </Field>
+                      )
+                    }}
+                  </form.Field>
+                </div>
+              )
+            }
+          </form.Subscribe>
+        </FieldGroup>
       </FieldSet>
+      <Button
+        type="submit"
+        className="rounded-none bg-destructive hover:bg-destructive/80"
+      >
+        Submit
+      </Button>
     </form>
   )
 }
