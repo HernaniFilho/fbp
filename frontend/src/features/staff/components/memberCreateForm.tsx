@@ -36,18 +36,19 @@ import {
 } from '#/components/ui/field'
 import { Checkbox } from '#/components/ui/checkbox'
 import { Button } from '#/components/ui/button'
+import { Spinner } from '#/components/ui/spinner'
 
 const defaultMember: MemberCreate = {
   name: '',
-  sex: 'n/a' satisfies Sex,
+  sex: 'not_specified' satisfies Sex,
   age: 0 satisfies Age,
-  handedness: 'n/a' satisfies Handedness,
+  handedness: 'not_specified' satisfies Handedness,
   hasParanormalParent: false,
   numberOfMissions: 0,
   serviceTime: 0,
   hadParanormalEvent: false,
   ageOfFirstParanormalEvent: 0 satisfies Age,
-  typeOfFirstParanormalEvent: 'n/a' satisfies ParanormalEventType,
+  typeOfFirstParanormalEvent: 'not_specified' satisfies ParanormalEventType,
   paranormalLevel: 0,
 }
 
@@ -174,7 +175,9 @@ export default function MemberCreateForm() {
                           if (newMode === 'number') {
                             field.handleChange(0)
                           } else {
-                            field.handleChange(newMode as 'n/a' | 'inf')
+                            field.handleChange(
+                              newMode as 'not_specified' | 'infinite',
+                            )
                           }
                         }}
                       >
@@ -576,9 +579,16 @@ export default function MemberCreateForm() {
           <Button
             type="submit"
             disabled={!canSubmit}
-            className="rounded-none bg-destructive hover:bg-destructive/80"
+            variant="secondary"
+            className="rounded-none"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+            {isSubmitting ? (
+              <span>
+                <Spinner /> Submitting...
+              </span>
+            ) : (
+              <span>Submit</span>
+            )}
           </Button>
         )}
       </form.Subscribe>
