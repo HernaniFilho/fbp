@@ -7,7 +7,7 @@ from src.features.staff.models import Handedness, Sex
 from src.features.staff.utils import normalize_age
 
 
-class StaffBase(BaseModel):
+class StaffMemberBase(BaseModel):
     sex: Sex = Field(description="Sex of the staff member")
     age: str = Field(description="Age of the staff member")
     handness: Handedness = Field(description="Handedness of the staff member")
@@ -58,14 +58,14 @@ class StaffBase(BaseModel):
         return value
 
 
-class StaffCreate(StaffBase):
+class StaffMemberCreate(StaffMemberBase):
     name: str = Field(
         min_length=2, max_length=255, description="Name of the staff member"
     )
     pass
 
 
-class StaffUpdate(BaseModel):
+class StaffMemberUpdate(BaseModel):
     sex: Sex | None = Field(default=None, description="Sex of the staff member")
     age: str | None = Field(default=None, description="Age of the staff member")
     handness: Handedness | None = Field(
@@ -119,6 +119,6 @@ class StaffUpdate(BaseModel):
         return value
 
 
-class StaffResponse(StaffBase):
+class StaffMemberResponse(StaffMemberBase):
     id: uuid.UUID = Field(description="Unique identifier for the staff member")
     model_config = ConfigDict(from_attributes=True)

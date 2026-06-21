@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Boolean, CheckConstraint, Integer
+from sqlalchemy import Boolean, CheckConstraint, Integer, String
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, validates
 
@@ -15,6 +15,7 @@ class Base(DeclarativeBase):
 class Staff(Base):
     __tablename__ = "staff"
     __table_args__ = (
+        CheckConstraint("lenght(name) BETWEEN 2 AND 255", name="ck_name_length"),
         CheckConstraint("numberOfMissions >= 0", name="ck_number_of_missions"),
         CheckConstraint("serviceTime >= 0", name="ck_service_time"),
         CheckConstraint(
@@ -29,6 +30,7 @@ class Staff(Base):
         primary_key=True, default=uuid.uuid4, index=True
     )
 
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
     sex: Mapped[Sex] = mapped_column(SAEnum(Sex))
     age: Mapped[str] = mapped_column()
     handedness: Mapped[Handedness] = mapped_column(SAEnum(Handedness))

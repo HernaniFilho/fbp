@@ -1,10 +1,11 @@
 from collections.abc import Generator
 from typing import Annotated
 
-from app.core.settings import settings
 from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
+
+from src.core.settings import settings
 
 engine = create_engine(
     settings.DATABASE_URL, pool_pre_ping=True, pool_size=10, max_overflow=20, echo=False
