@@ -10,7 +10,7 @@ from src.features.staff.utils import normalize_age
 class StaffMemberBase(BaseModel):
     sex: Sex = Field(description="Sex of the staff member")
     age: str = Field(description="Age of the staff member")
-    handness: Handedness = Field(description="Handedness of the staff member")
+    handedness: Handedness = Field(description="Handedness of the staff member")
     hasParanormalParent: bool = Field(
         description="Whether the staff member has a paranormal parent"
     )
@@ -29,7 +29,7 @@ class StaffMemberBase(BaseModel):
         default=None,
         description="Age of the staff member when they first had a paranormal event",
     )
-    paranormalEventType: ParanormalEventType | None = Field(
+    typeOfFirstParanormalEvent: ParanormalEventType | None = Field(
         default=None,
         description="Type of paranormal event the staff member had",
     )
@@ -68,7 +68,7 @@ class StaffMemberCreate(StaffMemberBase):
 class StaffMemberUpdate(BaseModel):
     sex: Sex | None = Field(default=None, description="Sex of the staff member")
     age: str | None = Field(default=None, description="Age of the staff member")
-    handness: Handedness | None = Field(
+    handedness: Handedness | None = Field(
         default=None, description="Handedness of the staff member"
     )
     hasParanormalParent: bool | None = Field(
@@ -89,7 +89,7 @@ class StaffMemberUpdate(BaseModel):
         default=None,
         description="Age of the staff member when they first had a paranormal event",
     )
-    paranormalEventType: ParanormalEventType | None = Field(
+    typeOfFirstParanormalEvent: ParanormalEventType | None = Field(
         default=None, description="Type of paranormal event the staff member had"
     )
 

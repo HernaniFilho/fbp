@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
     CORS_METHODS: list[str] = ["*"]
     CORS_HEADERS: list[str] = ["*"]
-    API_V1_STR: str = "/api"
+    API_STR: str = "/api"
 
 
 settings = Settings()  # type: ignore
