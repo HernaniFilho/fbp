@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy.orm import Session
 
-from src.core.exceptions import NotFoundException, info_logger
+from src.core.exceptions import AlreadyExistsException, NotFoundException, info_logger
 from src.features.staff.models import Staff
 from src.features.staff.schemas import StaffMemberCreate, StaffMemberUpdate
 
@@ -11,6 +11,10 @@ STAFF_ENTITY = "Staff member"
 
 def create_staff_member(db: Session, member: StaffMemberCreate):
     info_logger.info(f"Creating staff member: {member.name}")
+    existing = db.query(Staff).filter(Staff.name == member.name).first()
+    if existing:
+        raise AlreadyExistsException(STAFF_ENTITY, member.name)
+
     db_member = Staff(**member.model_dump())
     db.add(db_member)
     db.flush()

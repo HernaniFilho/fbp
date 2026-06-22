@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 error_logger = logging.getLogger("uvicorn.error")
-info_logger = logging.getLogger("uvicorn.access")
+info_logger = logging.getLogger(__name__)
 
 
 # --- Error codes ----------------------------------------

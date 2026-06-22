@@ -2,13 +2,24 @@
 import { createServerFn } from '@tanstack/react-start'
 import { apiClient } from '#/lib/api-client'
 import {
-  memberCreateBackendSchema,
-  memberCreateSchema,
   memberSchema,
   StaffMembersSchema,
   type Member,
   type MemberCreate,
 } from '../schemas/staff'
+
+type MemberCreateJSON = Omit<
+  MemberCreate,
+  | 'age'
+  | 'ageOfFirstParanormalEvent'
+  | 'typeOfFirstParanormalEvent'
+  | 'paranormalLevel'
+> & {
+  age: string | number
+  ageOfFirstParanormalEvent?: string | number | null
+  typeOfFirstParanormalEvent?: string | null
+  paranormalLevel?: number | null
+}
 
 export const getStaffMembers = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Member[]> => {
@@ -18,7 +29,16 @@ export const getStaffMembers = createServerFn({ method: 'GET' }).handler(
 )
 
 export const createStaffMember = createServerFn({ method: 'POST' })
-  .validator((data: MemberCreate) => memberCreateBackendSchema.parse(data))
+  .validator((data: MemberCreateJSON) => ({
+    ...data,
+    age: Number(data.age),
+    ageOfFirstParanormalEvent:
+      data.ageOfFirstParanormalEvent != null
+        ? Number(data.ageOfFirstParanormalEvent)
+        : undefined,
+    typeOfFirstParanormalEvent: data.typeOfFirstParanormalEvent ?? undefined,
+    paranormalLevel: data.paranormalLevel ?? undefined,
+  }))
   .handler(async ({ data: payload }) => {
     const { data } = await apiClient.post('/staff', payload)
     return memberSchema.parse(data)

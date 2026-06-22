@@ -4,8 +4,7 @@ from sqlalchemy import Boolean, CheckConstraint, Integer, String
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, validates
 
-from src.features.staff.enums import AgeCategory, Handedness, ParanormalEventType, Sex
-from src.features.staff.utils import normalize_age
+from src.features.staff.enums import Handedness, ParanormalEventType, Sex
 
 
 class Base(DeclarativeBase):
@@ -18,8 +17,9 @@ class Staff(Base):
         CheckConstraint("length(name) BETWEEN 2 AND 255", name="ck_name_length"),
         CheckConstraint("number_of_missions >= 0", name="ck_number_of_missions"),
         CheckConstraint("service_time >= 0", name="ck_service_time"),
+        CheckConstraint("age >= 18", name="ck_age"),
         CheckConstraint(
-            "CAST(age_of_first_paranormal_event AS INTEGER) >= 0",
+            "age_of_first_paranormal_event >= 0",
             name="ck_age_of_first_paranormal_event",
         ),
         CheckConstraint(
@@ -31,9 +31,9 @@ class Staff(Base):
         primary_key=True, default=uuid.uuid4, index=True
     )
 
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     sex: Mapped[Sex] = mapped_column(SAEnum(Sex))
-    age: Mapped[str] = mapped_column()
+    age: Mapped[int] = mapped_column()
     handedness: Mapped[Handedness] = mapped_column(SAEnum(Handedness))
     hasParanormalParent: Mapped[bool] = mapped_column("has_paranormal_parent", Boolean)
 
@@ -47,9 +47,9 @@ class Staff(Base):
     )
 
     hadParanormalEvent: Mapped[bool] = mapped_column("had_paranormal_event", Boolean)
-    ageOfFirstParanormalEvent: Mapped[str | None] = mapped_column(
+    ageOfFirstParanormalEvent: Mapped[int | None] = mapped_column(
         "age_of_first_paranormal_event",
-        String,
+        Integer,
         nullable=True,
     )
     typeOfFirstParanormalEvent: Mapped[ParanormalEventType | None] = mapped_column(
@@ -62,19 +62,11 @@ class Staff(Base):
         nullable=True,
     )
 
-    @property
-    def parsed_age(self) -> int | str:
-        """Age of the staff member as an integer, or its special category string."""
-        if self.age in (AgeCategory.not_specified, AgeCategory.infinite):
-            return self.age
-        return int(self.age)
-
     @validates("age")
-    def validate_age(self, key: str, value: str) -> str:
-        normalized = normalize_age(value)
-        if normalized is None:
-            raise ValueError("Age is required")
-        return normalized
+    def validate_age(self, key: str, value: int) -> int:
+        if value < 18:
+            raise ValueError("age must be at least 18")
+        return value
 
     @validates("numberOfMissions")
     def validate_number_of_missions(self, key: str, value: int) -> int:
@@ -90,13 +82,10 @@ class Staff(Base):
 
     @validates("ageOfFirstParanormalEvent")
     def validate_age_of_first_paranormal_event(
-        self, key: str, value: str | None
-    ) -> str | None:
-        if value is not None:
-            normalized = normalize_age(value)
-            if normalized is None:
-                raise ValueError("Age was not valid")
-            return normalized
+        self, key: str, value: int | None
+    ) -> int | None:
+        if value is not None and value < 0:
+            raise ValueError("ageOfFirstParanormalEvent must be non-negative")
         return value
 
     @validates("paranormalLevel")

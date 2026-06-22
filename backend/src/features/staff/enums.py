@@ -8,11 +8,6 @@ class Sex(str, enum.Enum):
     not_specified = "not_specified"
 
 
-class AgeCategory(str, enum.Enum):
-    not_specified = "not_specified"
-    infinite = "infinite"
-
-
 class Handedness(str, enum.Enum):
     left = "left"
     right = "right"

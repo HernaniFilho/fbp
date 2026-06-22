@@ -8,15 +8,10 @@ import {
   memberCreateSchema,
   SEX,
   SEX_LABELS,
-  AGE_SPECIAL_VALUES,
-  AGE_SPECIAL_LABELS,
   HANDEDNESS,
   HANDEDNESS_LABELS,
   PARANORMAL_EVENT_TYPE,
   PARANORMAL_EVENT_TYPE_LABELS,
-  type MemberCreateInput,
-  memberCreateBackendSchema,
-  type MemberCreateOutput,
 } from '../schemas/staff'
 import {
   Select,
@@ -42,7 +37,7 @@ import { Button } from '#/components/ui/button'
 import { Spinner } from '#/components/ui/spinner'
 import { createStaffMember } from '../service/staff'
 
-const defaultMember: MemberCreateInput = {
+const defaultMember: MemberCreate = {
   name: '',
   sex: 'not_specified' satisfies Sex,
   age: 18 satisfies Age,
@@ -51,9 +46,6 @@ const defaultMember: MemberCreateInput = {
   numberOfMissions: 0,
   serviceTime: 0,
   hadParanormalEvent: false,
-  ageOfFirstParanormalEvent: undefined,
-  typeOfFirstParanormalEvent: undefined,
-  paranormalLevel: undefined,
 }
 
 export default function MemberCreateForm() {
@@ -61,9 +53,7 @@ export default function MemberCreateForm() {
     defaultValues: defaultMember,
     onSubmit: async ({ value }) => {
       try {
-        const payload = memberCreateBackendSchema.parse(value)
-
-        const result = await createStaffMember({ data: payload })
+        const result = await createStaffMember({ data: value })
 
         console.log('Staff member created:', result)
         form.reset()
@@ -170,9 +160,6 @@ export default function MemberCreateForm() {
               {(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
-                const value = field.state.value
-                const mode = typeof value === 'number' ? 'number' : value
-
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldContent>
@@ -181,53 +168,18 @@ export default function MemberCreateForm() {
                         <FieldError errors={field.state.meta.errors} />
                       )}
                     </FieldContent>
-                    <div className="flex flex-row gap-2">
-                      <Select
-                        value={mode}
-                        onValueChange={(newMode) => {
-                          if (newMode === 'number') {
-                            field.handleChange(0)
-                          } else {
-                            field.handleChange(
-                              newMode as 'not_specified' | 'infinite',
-                            )
-                          }
-                        }}
-                      >
-                        <SelectTrigger className="rounded-none">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-none">
-                          <SelectItem value="number" className="rounded-none">
-                            Number
-                          </SelectItem>
-                          {AGE_SPECIAL_VALUES.map((special) => (
-                            <SelectItem
-                              key={special}
-                              value={special}
-                              className="rounded-none"
-                            >
-                              {AGE_SPECIAL_LABELS[special]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      {mode === 'number' && (
-                        <Input
-                          id={field.name}
-                          type="number"
-                          min={0}
-                          value={value}
-                          onChange={(e) =>
-                            field.handleChange(Number(e.target.value))
-                          }
-                          onBlur={field.handleBlur}
-                          aria-invalid={isInvalid}
-                          className="rounded-none"
-                        />
-                      )}
-                    </div>
+                    <Input
+                      id={field.name}
+                      type="number"
+                      min={0}
+                      value={field.state.value ? Number(field.state.value) : 18}
+                      onChange={(e) =>
+                        field.handleChange(Number(e.target.value))
+                      }
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                      className="rounded-none"
+                    />
                   </Field>
                 )
               }}
@@ -416,7 +368,7 @@ export default function MemberCreateForm() {
                     id={field.name}
                     type="number"
                     min={0}
-                    value={field.state.value}
+                    value={field.state.value ?? ''}
                     onChange={(e) => field.handleChange(Number(e.target.value))}
                     onBlur={field.handleBlur}
                     aria-invalid={isInvalid}
@@ -478,67 +430,28 @@ export default function MemberCreateForm() {
                     {(field) => {
                       const isInvalid =
                         field.state.meta.isTouched && !field.state.meta.isValid
-                      const value = field.state.value
-                      const mode = typeof value === 'number' ? 'number' : value
-
                       return (
                         <Field data-invalid={isInvalid}>
-                          <FieldLabel htmlFor={field.name}>
-                            Age of First Event
-                          </FieldLabel>
-                          {isInvalid && (
-                            <FieldError errors={field.state.meta.errors} />
-                          )}
-                          <div className="flex flex-row gap-2">
-                            <Select
-                              value={mode}
-                              onValueChange={(newMode) => {
-                                if (newMode === 'number') {
-                                  field.handleChange(18)
-                                } else {
-                                  field.handleChange(
-                                    newMode as 'not_specified' | 'infinite',
-                                  )
-                                }
-                              }}
-                            >
-                              <SelectTrigger className="rounded-none">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="rounded-none">
-                                <SelectItem
-                                  value="number"
-                                  className="rounded-none"
-                                >
-                                  Number
-                                </SelectItem>
-                                {AGE_SPECIAL_VALUES.map((special) => (
-                                  <SelectItem
-                                    key={special}
-                                    value={special}
-                                    className="rounded-none"
-                                  >
-                                    {AGE_SPECIAL_LABELS[special]}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-
-                            {mode === 'number' && (
-                              <Input
-                                id={field.name}
-                                type="number"
-                                min={0}
-                                value={value}
-                                onChange={(e) =>
-                                  field.handleChange(Number(e.target.value))
-                                }
-                                onBlur={field.handleBlur}
-                                aria-invalid={isInvalid}
-                                className="rounded-none"
-                              />
+                          <FieldContent>
+                            <FieldLabel htmlFor={field.name}>
+                              Age of First Event
+                            </FieldLabel>
+                            {isInvalid && (
+                              <FieldError errors={field.state.meta.errors} />
                             )}
-                          </div>
+                          </FieldContent>
+                          <Input
+                            id={field.name}
+                            type="number"
+                            min={0}
+                            value={field.state.value ?? ''}
+                            onChange={(e) =>
+                              field.handleChange(Number(e.target.value))
+                            }
+                            onBlur={field.handleBlur}
+                            aria-invalid={isInvalid}
+                            className="rounded-none"
+                          />
                         </Field>
                       )
                     }}
@@ -558,7 +471,7 @@ export default function MemberCreateForm() {
                             <FieldError errors={field.state.meta.errors} />
                           )}
                           <Select
-                            value={field.state.value}
+                            value={field.state.value ?? ''}
                             onValueChange={(value) =>
                               field.handleChange(value as ParanormalEventType)
                             }

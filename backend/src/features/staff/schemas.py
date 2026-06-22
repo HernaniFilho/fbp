@@ -1,15 +1,17 @@
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.features.staff.enums import ParanormalEventType
 from src.features.staff.models import Handedness, Sex
-from src.features.staff.utils import normalize_age
 
 
 class StaffMemberBase(BaseModel):
+    name: str = Field(
+        min_length=2, max_length=255, description="Name of the staff member"
+    )
     sex: Sex = Field(description="Sex of the staff member")
-    age: str = Field(description="Age of the staff member")
+    age: int = Field(description="Age of the staff member")
     handedness: Handedness = Field(description="Handedness of the staff member")
     hasParanormalParent: bool = Field(
         description="Whether the staff member has a paranormal parent"
@@ -25,7 +27,7 @@ class StaffMemberBase(BaseModel):
     hadParanormalEvent: bool = Field(
         description="Whether the staff member had a paranormal event"
     )
-    ageOfFirstParanormalEvent: str | None = Field(
+    ageOfFirstParanormalEvent: int | None = Field(
         default=None,
         description="Age of the staff member when they first had a paranormal event",
     )
@@ -41,33 +43,14 @@ class StaffMemberBase(BaseModel):
         description="Level of paranormal event the staff member had",
     )
 
-    @field_validator("age")
-    def validate_age(cls, value: str) -> str:
-        normalized = normalize_age(value)
-        if normalized is None:
-            raise ValueError("Age was not provided")
-        return normalized
-
-    @field_validator("ageOfFirstParanormalEvent")
-    def validate_age_of_first_paranormal_event(cls, value: str | None) -> str | None:
-        if value is not None:
-            normalized = normalize_age(value)
-            if normalized is None:
-                raise ValueError("Age was not valid")
-            return normalized
-        return value
-
 
 class StaffMemberCreate(StaffMemberBase):
-    name: str = Field(
-        min_length=2, max_length=255, description="Name of the staff member"
-    )
     pass
 
 
 class StaffMemberUpdate(BaseModel):
     sex: Sex | None = Field(default=None, description="Sex of the staff member")
-    age: str | None = Field(default=None, description="Age of the staff member")
+    age: int | None = Field(default=None, description="Age of the staff member")
     handedness: Handedness | None = Field(
         default=None, description="Handedness of the staff member"
     )
@@ -85,7 +68,7 @@ class StaffMemberUpdate(BaseModel):
     hadParanormalEvent: bool | None = Field(
         default=None, description="Whether the staff member had a paranormal event"
     )
-    ageOfFirstParanormalEvent: str | None = Field(
+    ageOfFirstParanormalEvent: int | None = Field(
         default=None,
         description="Age of the staff member when they first had a paranormal event",
     )
@@ -99,24 +82,6 @@ class StaffMemberUpdate(BaseModel):
         le=100,
         description="Level of paranormal event the staff member had",
     )
-
-    @field_validator("age")
-    def validate_age(cls, value: str | None) -> str | None:
-        if value is not None:
-            normalized = normalize_age(value)
-            if normalized is None:
-                raise ValueError("Age was not provided")
-            return normalized
-        return value
-
-    @field_validator("ageOfFirstParanormalEvent")
-    def validate_age_of_first_paranormal_event(cls, value: str | None) -> str | None:
-        if value is not None:
-            normalized = normalize_age(value)
-            if normalized is None:
-                raise ValueError("Age was not valid")
-            return normalized
-        return value
 
 
 class StaffMemberResponse(StaffMemberBase):
