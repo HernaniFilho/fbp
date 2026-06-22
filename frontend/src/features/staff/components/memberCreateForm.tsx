@@ -14,6 +14,9 @@ import {
   HANDEDNESS_LABELS,
   PARANORMAL_EVENT_TYPE,
   PARANORMAL_EVENT_TYPE_LABELS,
+  type MemberCreateInput,
+  memberCreateBackendSchema,
+  type MemberCreateOutput,
 } from '../schemas/staff'
 import {
   Select,
@@ -37,30 +40,40 @@ import {
 import { Checkbox } from '#/components/ui/checkbox'
 import { Button } from '#/components/ui/button'
 import { Spinner } from '#/components/ui/spinner'
+import { createStaffMember } from '../service/staff'
 
-const defaultMember: MemberCreate = {
+const defaultMember: MemberCreateInput = {
   name: '',
   sex: 'not_specified' satisfies Sex,
-  age: 0 satisfies Age,
+  age: 18 satisfies Age,
   handedness: 'not_specified' satisfies Handedness,
   hasParanormalParent: false,
   numberOfMissions: 0,
   serviceTime: 0,
   hadParanormalEvent: false,
-  ageOfFirstParanormalEvent: 0 satisfies Age,
-  typeOfFirstParanormalEvent: 'not_specified' satisfies ParanormalEventType,
-  paranormalLevel: 0,
+  ageOfFirstParanormalEvent: undefined,
+  typeOfFirstParanormalEvent: undefined,
+  paranormalLevel: undefined,
 }
 
 export default function MemberCreateForm() {
   const form = useForm({
     defaultValues: defaultMember,
     onSubmit: async ({ value }) => {
-      // TODO: send values to server
-      console.log(value)
+      try {
+        const payload = memberCreateBackendSchema.parse(value)
+
+        const result = await createStaffMember({ data: payload })
+
+        console.log('Staff member created:', result)
+        form.reset()
+      } catch (error) {
+        console.error('Error creating staff member:', error)
+      }
     },
     validators: {
       onBlur: memberCreateSchema,
+      onChange: memberCreateSchema,
     },
   })
 
@@ -429,8 +442,14 @@ export default function MemberCreateForm() {
                       field.handleChange(checked === true)
                       // limpa os campos dependentes ao desmarcar
                       if (!checked) {
-                        form.setFieldValue('ageOfFirstParanormalEvent', 0)
-                        form.setFieldValue('typeOfFirstParanormalEvent', 'n/a')
+                        form.setFieldValue(
+                          'ageOfFirstParanormalEvent',
+                          undefined,
+                        )
+                        form.setFieldValue(
+                          'typeOfFirstParanormalEvent',
+                          undefined,
+                        )
                       }
                     }}
                     aria-invalid={isInvalid}
@@ -475,9 +494,11 @@ export default function MemberCreateForm() {
                               value={mode}
                               onValueChange={(newMode) => {
                                 if (newMode === 'number') {
-                                  field.handleChange(0)
+                                  field.handleChange(18)
                                 } else {
-                                  field.handleChange(newMode as 'n/a' | 'inf')
+                                  field.handleChange(
+                                    newMode as 'not_specified' | 'infinite',
+                                  )
                                 }
                               }}
                             >

@@ -68,6 +68,22 @@ export const memberSchema = z.object({
 })
 export type Member = z.infer<typeof memberSchema>
 export const memberCreateSchema = memberSchema.omit({ id: true })
-export type MemberCreate = z.infer<typeof memberCreateSchema>
+export type MemberCreateInput = z.infer<typeof memberCreateSchema>
+export const memberCreateBackendSchema = memberCreateSchema.transform(
+  (data) => ({
+    ...data,
+    age: String(data.age),
+    ageOfFirstParanormalEvent:
+      data.hadParanormalEvent && data.ageOfFirstParanormalEvent !== undefined
+        ? String(data.ageOfFirstParanormalEvent)
+        : undefined,
+    typeOfFirstParanormalEvent:
+      data.hadParanormalEvent && data.typeOfFirstParanormalEvent !== undefined
+        ? data.typeOfFirstParanormalEvent
+        : undefined,
+  }),
+)
+export type MemberCreateOutput = z.infer<typeof memberCreateBackendSchema>
 export const memberUpdateSchema = memberCreateSchema.omit({ name: true })
 export type MemberUpdate = z.infer<typeof memberUpdateSchema>
+export const StaffMembersSchema = z.array(memberSchema)
