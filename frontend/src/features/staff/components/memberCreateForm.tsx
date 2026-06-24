@@ -35,7 +35,7 @@ import {
 import { Checkbox } from '#/components/ui/checkbox'
 import { Button } from '#/components/ui/button'
 import { Spinner } from '#/components/ui/spinner'
-import { createStaffMember } from '../service/staff'
+import { createStaffMember, useCreateStaffMember } from '../service/staff'
 
 const defaultMember: MemberCreate = {
   name: '',
@@ -49,11 +49,13 @@ const defaultMember: MemberCreate = {
 }
 
 export default function MemberCreateForm() {
+  const { mutateAsync } = useCreateStaffMember()
+
   const form = useForm({
     defaultValues: defaultMember,
     onSubmit: async ({ value }) => {
       try {
-        const result = await createStaffMember({ data: value })
+        const result = await mutateAsync(value)
 
         console.log('Staff member created:', result)
         form.reset()

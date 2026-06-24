@@ -1,5 +1,10 @@
 'use server'
 import { createServerFn } from '@tanstack/react-start'
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { apiClient } from '#/lib/api-client'
 import {
   memberSchema,
@@ -20,6 +25,8 @@ type MemberCreateJSON = Omit<
   typeOfFirstParanormalEvent?: string | null
   paranormalLevel?: number | null
 }
+
+// ─── Server Functions ────────────────────────────────────────────────────────
 
 export const getStaffMembers = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Member[]> => {
@@ -43,3 +50,34 @@ export const createStaffMember = createServerFn({ method: 'POST' })
     const { data } = await apiClient.post('/staff', payload)
     return memberSchema.parse(data)
   })
+
+// ─── Query Keys ──────────────────────────────────────────────────────────────
+
+export const staffKeys = {
+  all: ['staff'] as const,
+  lists: () => [...staffKeys.all, 'list'] as const,
+}
+
+// ─── Query Options ───────────────────────────────────────────────────────────
+
+export const staffMembersQueryOptions = queryOptions({
+  queryKey: staffKeys.lists(),
+  queryFn: () => getStaffMembers(),
+})
+
+// ─── Hooks ───────────────────────────────────────────────────────────────────
+
+export function useStaffMembers() {
+  return staffMembersQueryOptions
+}
+
+export function useCreateStaffMember() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: MemberCreate) => createStaffMember({ data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: staffKeys.lists() })
+    },
+  })
+}
