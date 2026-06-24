@@ -35,7 +35,8 @@ import {
 import { Checkbox } from '#/components/ui/checkbox'
 import { Button } from '#/components/ui/button'
 import { Spinner } from '#/components/ui/spinner'
-import { createStaffMember, useCreateStaffMember } from '../service/staff'
+import { useCreateStaffMember } from '../service/staff'
+import { toast } from 'sonner'
 
 const defaultMember: MemberCreate = {
   name: '',
@@ -58,6 +59,7 @@ export default function MemberCreateForm() {
         const result = await mutateAsync(value)
 
         console.log('Staff member created:', result)
+        toast.success('Staff member created successfully')
         form.reset()
       } catch (error) {
         console.error('Error creating staff member:', error)

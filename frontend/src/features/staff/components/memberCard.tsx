@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '#/components/ui/card'
-import type { Member } from '../schemas/staff'
+import { SEX_LABELS, type Member } from '../schemas/staff'
 
 type MemberCardProps = {
   member: Member
@@ -36,7 +36,7 @@ export default function MemberCard({
           </div>
           <div className="flex flex-col">
             <h3 className="font-semibold">Sex</h3>
-            <p className="text-muted-foreground">{member.sex}</p>
+            <p className="text-muted-foreground">{SEX_LABELS[member.sex]}</p>
           </div>
           <div className="flex flex-col">
             <h3 className="font-semibold">Paranormal Level</h3>
