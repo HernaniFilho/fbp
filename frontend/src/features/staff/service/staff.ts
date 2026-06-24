@@ -63,6 +63,7 @@ export const staffKeys = {
 export const staffMembersQueryOptions = queryOptions({
   queryKey: staffKeys.lists(),
   queryFn: () => getStaffMembers(),
+  staleTime: 5 * 1000 * 60,
 })
 
 // ─── Hooks ───────────────────────────────────────────────────────────────────
