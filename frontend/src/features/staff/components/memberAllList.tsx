@@ -1,16 +1,22 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { staffMembersQueryOptions } from '../service/staff'
+import {
+  staffMembersQueryOptions,
+  useDeleteStaffMember,
+} from '../service/staff'
 import MemberCard from './memberCard'
 import { useState } from 'react'
 import type { Member } from '../schemas/staff'
 import MemberViewDialog from './memberViewDialog'
+import { MemberDeleteAlertDialog } from './memberDeleteAlertDialog'
 
 export default function MemberAllList() {
   const { data: members, isFetching } = useSuspenseQuery(
     staffMembersQueryOptions,
   )
+  const { mutateAsync: deleteStaffMember } = useDeleteStaffMember()
 
   const [viewingMember, setViewingMember] = useState<Member | null>(null)
+  const [deletingMember, setDeletingMember] = useState<Member | null>(null)
 
   if (isFetching)
     return (
@@ -34,7 +40,7 @@ export default function MemberAllList() {
             member={m}
             onView={() => setViewingMember(m)}
             onEdit={() => {}}
-            onDelete={() => {}}
+            onDelete={() => setDeletingMember(m)}
           />
         ))}
       </div>
@@ -43,6 +49,19 @@ export default function MemberAllList() {
         member={viewingMember}
         isOpen={viewingMember !== null}
         onClose={() => setViewingMember(null)}
+      />
+
+      <MemberDeleteAlertDialog
+        memberName={deletingMember?.name}
+        isOpen={deletingMember !== null}
+        onCancel={() => setDeletingMember(null)}
+        onConfirm={() => {
+          deleteStaffMember({
+            id: deletingMember!.id,
+            name: deletingMember!.name,
+          })
+          setDeletingMember(null)
+        }}
       />
     </>
   )

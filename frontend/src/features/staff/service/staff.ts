@@ -12,6 +12,7 @@ import {
   type Member,
   type MemberCreate,
 } from '../schemas/staff'
+import { toast } from 'sonner'
 
 type MemberCreateJSON = Omit<
   MemberCreate,
@@ -51,6 +52,13 @@ export const createStaffMember = createServerFn({ method: 'POST' })
     return memberSchema.parse(data)
   })
 
+export const deleteStaffMember = createServerFn({ method: 'POST' })
+  .validator((id: string) => id)
+  .handler(async ({ data: id }) => {
+    await apiClient.delete(`/staff/${id}`)
+    return null
+  })
+
 // ─── Query Keys ──────────────────────────────────────────────────────────────
 
 export const staffKeys = {
@@ -77,8 +85,28 @@ export function useCreateStaffMember() {
 
   return useMutation({
     mutationFn: (data: MemberCreate) => createStaffMember({ data }),
-    onSuccess: () => {
+    onSuccess: (createdMember) => {
       queryClient.invalidateQueries({ queryKey: staffKeys.lists() })
+      toast.success(`Staff member: ${createdMember.name} created successfully`)
+    },
+    onError: (error) => {
+      toast.error(`Failed to create staff member: ${error.message}`)
+    },
+  })
+}
+
+export function useDeleteStaffMember() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, name: _name }: { id: string; name: string }) =>
+      deleteStaffMember({ data: id }),
+    onSuccess: (_, { id: _id, name }) => {
+      queryClient.invalidateQueries({ queryKey: staffKeys.lists() })
+      toast.success(`Staff member: ${name} deleted successfully`)
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete staff member: ${error.message}`)
     },
   })
 }

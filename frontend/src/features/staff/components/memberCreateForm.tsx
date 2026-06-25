@@ -50,20 +50,14 @@ const defaultMember: MemberCreate = {
 }
 
 export default function MemberCreateForm() {
-  const { mutateAsync } = useCreateStaffMember()
+  const { mutateAsync: createStaffMember } = useCreateStaffMember()
 
   const form = useForm({
     defaultValues: defaultMember,
     onSubmit: async ({ value }) => {
-      try {
-        const result = await mutateAsync(value)
-
-        console.log('Staff member created:', result)
-        toast.success('Staff member created successfully')
-        form.reset()
-      } catch (error) {
-        console.error('Error creating staff member:', error)
-      }
+      const result = await createStaffMember(value)
+      console.log('Staff member created:', result)
+      form.reset()
     },
     validators: {
       onBlur: memberCreateSchema,

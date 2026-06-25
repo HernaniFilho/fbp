@@ -84,7 +84,7 @@ export default function MemberCard(props: MemberCardProps) {
         <div className="flex flex-row justify-between w-full gap-2">
           <div className="flex flex-row gap-2">
             <Button
-              variant="default"
+              variant="secondary"
               onClick={onView}
               className="rounded-none w-20"
             >
