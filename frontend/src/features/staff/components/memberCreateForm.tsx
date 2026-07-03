@@ -35,8 +35,7 @@ import {
 import { Checkbox } from '#/components/ui/checkbox'
 import { Button } from '#/components/ui/button'
 import { Spinner } from '#/components/ui/spinner'
-import { useCreateStaffMember } from '../service/staff'
-import { toast } from 'sonner'
+import { useCreateStaffMember } from '../service/staffService'
 
 const defaultMember: MemberCreate = {
   name: '',

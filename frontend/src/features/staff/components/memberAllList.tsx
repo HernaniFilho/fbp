@@ -2,18 +2,23 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import {
   staffMembersQueryOptions,
   useDeleteStaffMember,
-} from '../service/staff'
+} from '../service/staffService'
 import MemberCard from './memberCard'
 import { useState } from 'react'
 import type { Member } from '../schemas/staff'
 import MemberViewDialog from './memberViewDialog'
 import { MemberDeleteAlertDialog } from './memberDeleteAlertDialog'
+import { useAppStore } from '#/store/appStore'
 
 export default function MemberAllList() {
   const { data: members, isFetching } = useSuspenseQuery(
     staffMembersQueryOptions,
   )
   const { mutateAsync: deleteStaffMember } = useDeleteStaffMember()
+
+  const setSelectedStaffMemberId = useAppStore(
+    (s) => s.setSelectedStaffMemberId,
+  )
 
   const [viewingMember, setViewingMember] = useState<Member | null>(null)
   const [deletingMember, setDeletingMember] = useState<Member | null>(null)
@@ -39,7 +44,7 @@ export default function MemberAllList() {
             key={m.id}
             member={m}
             onView={() => setViewingMember(m)}
-            onEdit={() => {}}
+            onEdit={() => setSelectedStaffMemberId(m.id)}
             onDelete={() => setDeletingMember(m)}
           />
         ))}

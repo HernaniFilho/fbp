@@ -1,9 +1,12 @@
 import { Tabs, TabsList, TabsTrigger } from '#/components/ui/tabs'
 import MemberAllList from '#/features/staff/components/memberAllList'
 import MemberCreateForm from '#/features/staff/components/memberCreateForm'
-import { staffMembersQueryOptions } from '#/features/staff/service/staff'
+import MemberEditForm from '#/features/staff/components/memberEditForm'
+import { staffMembersQueryOptions } from '#/features/staff/service/staffService'
+import { useAppStore } from '#/store/appStore'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Activity, useState } from 'react'
+import { Activity, useEffect, useMemo, useState } from 'react'
 
 export const Route = createFileRoute('/_app/staff')({
   loader: ({ context: { queryClient } }) =>
@@ -13,12 +16,43 @@ export const Route = createFileRoute('/_app/staff')({
 
 function Staff() {
   const [currentTab, setCurrentTab] = useState('all')
+  const { data: members } = useSuspenseQuery(staffMembersQueryOptions)
+
+  const selectedStaffMemberId = useAppStore((s) => s.selectedStaffMemberId)
+  const setSelectedStaffMemberId = useAppStore(
+    (s) => s.setSelectedStaffMemberId,
+  )
+
+  const editingMember = useMemo(
+    () => members.find((m) => m.id === selectedStaffMemberId) ?? null,
+    [members, selectedStaffMemberId],
+  )
+
+  useEffect(() => {
+    if (editingMember) setCurrentTab('edit')
+  }, [editingMember])
+
+  // Edge Case
+  useEffect(() => {
+    if (selectedStaffMemberId && !editingMember && currentTab === 'edit') {
+      setCurrentTab('all')
+      setSelectedStaffMemberId(null)
+    }
+  }, [selectedStaffMemberId, editingMember, currentTab])
+
+  const handleTabChange = (tab: string) => {
+    setCurrentTab(tab)
+
+    if (tab !== 'edit' && selectedStaffMemberId) {
+      setSelectedStaffMemberId(null)
+    }
+  }
 
   return (
     <div className="mx-6 mt-6 flex flex-col gap-6">
       <Tabs
         value={currentTab}
-        onValueChange={setCurrentTab}
+        onValueChange={handleTabChange}
         orientation="horizontal"
       >
         <TabsList variant="line">
@@ -28,6 +62,11 @@ function Staff() {
           <TabsTrigger value="register" className="font-semibold">
             Register
           </TabsTrigger>
+          {editingMember && (
+            <TabsTrigger value="edit" className="font-semibold">
+              Edit
+            </TabsTrigger>
+          )}
         </TabsList>
       </Tabs>
 
@@ -55,6 +94,25 @@ function Staff() {
               elit.
             </p>
             <MemberCreateForm />
+          </div>
+        </Activity>
+        <Activity mode={currentTab === 'edit' ? 'visible' : 'hidden'}>
+          <div className="flex flex-col gap-2">
+            <h2 className="self-center text-primary text-4xl md:text-6xl break-normal font-bold uppercase">
+              Edit Member
+            </h2>
+            <p className="self-center text-muted-foreground text-justify mb-4">
+              HERE
+            </p>
+            {editingMember && (
+              <MemberEditForm
+                member={editingMember}
+                onSubmit={() => {
+                  setSelectedStaffMemberId(null)
+                  setCurrentTab('all')
+                }}
+              />
+            )}
           </div>
         </Activity>
       </div>
