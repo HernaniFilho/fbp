@@ -64,6 +64,6 @@ export const memberSchema = z.object({
 export type Member = z.infer<typeof memberSchema>
 export const memberCreateSchema = memberSchema.omit({ id: true })
 export type MemberCreate = z.infer<typeof memberCreateSchema>
-export const memberUpdateSchema = memberCreateSchema.omit({ name: true })
+export const memberUpdateSchema = memberSchema.omit({ name: true })
 export type MemberUpdate = z.infer<typeof memberUpdateSchema>
 export const StaffMembersSchema = z.array(memberSchema)

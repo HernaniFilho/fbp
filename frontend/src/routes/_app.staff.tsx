@@ -73,7 +73,7 @@ function Staff() {
       <div className="flex-1">
         <Activity mode={currentTab === 'all' ? 'visible' : 'hidden'}>
           <div className="flex flex-col gap-2">
-            <h2 className="self-center text-primary text-4xl md:text-6xl break-normal font-bold uppercase">
+            <h2 className="self-center text-center text-primary text-5xl md:text-6xl break-normal font-bold uppercase">
               Staff Members
             </h2>
             <p className="self-center text-muted-foreground text-justify mb-4">
@@ -85,24 +85,24 @@ function Staff() {
         </Activity>
         <Activity mode={currentTab === 'register' ? 'visible' : 'hidden'}>
           <div className="flex flex-col gap-2">
-            <h2 className="self-center text-primary text-4xl md:text-6xl break-normal font-bold uppercase">
+            <h2 className="self-center text-center text-primary text-5xl md:text-6xl break-normal font-bold uppercase">
               Application Form
             </h2>
             <p className="self-center text-muted-foreground text-justify mb-4">
               Please fill out the form below to register a new staff member for
-              the facility. Lorem ipsum dolor sit amet, consectetur adipiscing
-              elit.
+              the facility. Remember to save your changes when you're done.
             </p>
             <MemberCreateForm />
           </div>
         </Activity>
         <Activity mode={currentTab === 'edit' ? 'visible' : 'hidden'}>
           <div className="flex flex-col gap-2">
-            <h2 className="self-center text-primary text-4xl md:text-6xl break-normal font-bold uppercase">
-              Edit Member
+            <h2 className="self-center text-center text-primary text-5xl md:text-6xl break-normal font-bold uppercase">
+              Update Member Details
             </h2>
             <p className="self-center text-muted-foreground text-justify mb-4">
-              HERE
+              Please update the member's details below. Make sure to save your
+              changes when you're done.
             </p>
             {editingMember && (
               <MemberEditForm

@@ -11,6 +11,7 @@ import {
   StaffMembersSchema,
   type Member,
   type MemberCreate,
+  type MemberUpdate,
 } from '../schemas/staff'
 import { toast } from 'sonner'
 
@@ -22,6 +23,19 @@ type MemberCreateJSON = Omit<
   | 'paranormalLevel'
 > & {
   age: string | number
+  ageOfFirstParanormalEvent?: string | number | null
+  typeOfFirstParanormalEvent?: string | null
+  paranormalLevel?: number | null
+}
+
+type MemberUpdateJSON = Omit<
+  MemberUpdate,
+  | 'age'
+  | 'ageOfFirstParanormalEvent'
+  | 'typeOfFirstParanormalEvent'
+  | 'paranormalLevel'
+> & {
+  age?: string | number
   ageOfFirstParanormalEvent?: string | number | null
   typeOfFirstParanormalEvent?: string | null
   paranormalLevel?: number | null
@@ -49,6 +63,22 @@ export const createStaffMember = createServerFn({ method: 'POST' })
   }))
   .handler(async ({ data: payload }) => {
     const { data } = await apiClient.post('/staff', payload)
+    return memberSchema.parse(data)
+  })
+
+export const updateStaffMember = createServerFn({ method: 'POST' })
+  .validator((data: MemberUpdateJSON) => ({
+    ...data,
+    age: Number(data.age),
+    ageOfFirstParanormalEvent:
+      data.ageOfFirstParanormalEvent != null
+        ? Number(data.ageOfFirstParanormalEvent)
+        : undefined,
+    typeOfFirstParanormalEvent: data.typeOfFirstParanormalEvent ?? undefined,
+    paranormalLevel: data.paranormalLevel ?? undefined,
+  }))
+  .handler(async ({ data: payload }) => {
+    const { data } = await apiClient.put(`/staff/${payload.id}`, payload)
     return memberSchema.parse(data)
   })
 
@@ -91,6 +121,21 @@ export function useCreateStaffMember() {
     },
     onError: (error) => {
       toast.error(`Failed to create staff member: ${error.message}`)
+    },
+  })
+}
+
+export function useUpdateStaffMember() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: MemberUpdate) => updateStaffMember({ data }),
+    onSuccess: (updatedMember) => {
+      queryClient.invalidateQueries({ queryKey: staffKeys.lists() })
+      toast.success(`Staff member: ${updatedMember.name} updated successfully`)
+    },
+    onError: (error) => {
+      toast.error(`Failed to update staff member: ${error.message}`)
     },
   })
 }
