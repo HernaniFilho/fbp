@@ -8,6 +8,7 @@ import {
 } from '#/components/ui/card'
 import { Skeleton } from '#/components/ui/skeleton'
 import { SEX_LABELS, type Member } from '../schemas/staff'
+import React from 'react'
 
 type MemberCardPropsLoading = {
   isLoading: true
@@ -16,9 +17,10 @@ type MemberCardPropsLoading = {
 type MemberCardPropsLoaded = {
   isLoading?: false
   member: Member
-  onView: () => void
-  onEdit: () => void
-  onDelete: () => void
+  onView?: () => void
+  onEdit?: () => void
+  onDelete?: () => void
+  otherButtons?: React.ReactNode
 }
 type MemberCardProps = MemberCardPropsLoading | MemberCardPropsLoaded
 
@@ -53,7 +55,7 @@ export default function MemberCard(props: MemberCardProps) {
       </Card>
     )
 
-  const { member, onView, onEdit, onDelete } = props
+  const { member, onView, onEdit, onDelete, otherButtons } = props
 
   return (
     <Card className="rounded-none">
@@ -83,28 +85,35 @@ export default function MemberCard(props: MemberCardProps) {
       <CardFooter>
         <div className="flex flex-row justify-between w-full gap-2">
           <div className="flex flex-row gap-2">
-            <Button
-              variant="secondary"
-              onClick={onView}
-              className="rounded-none w-20"
-            >
-              View
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={onEdit}
-              className="rounded-none w-20"
-            >
-              Edit
-            </Button>
+            {onView && (
+              <Button
+                variant="secondary"
+                onClick={onView}
+                className="rounded-none w-20"
+              >
+                View
+              </Button>
+            )}
+            {onEdit && (
+              <Button
+                variant="secondary"
+                onClick={onEdit}
+                className="rounded-none w-20"
+              >
+                Edit
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="destructive"
+                onClick={onDelete}
+                className="rounded-none w-20"
+              >
+                Delete
+              </Button>
+            )}
+            {otherButtons && otherButtons}
           </div>
-          <Button
-            variant="destructive"
-            onClick={onDelete}
-            className="rounded-none w-20"
-          >
-            Delete
-          </Button>
         </div>
       </CardFooter>
     </Card>

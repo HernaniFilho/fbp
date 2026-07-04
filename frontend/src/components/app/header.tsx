@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
 const navItems = [
   { to: '/', label: 'Home' },
   { to: '/staff', label: 'Staff' },
+  { to: '/board', label: 'Board' },
 ]
 
 type HeaderProps = {
