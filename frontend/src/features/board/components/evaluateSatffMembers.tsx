@@ -155,7 +155,7 @@ export default function EvaluateStaffMembers() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
               {pending.map((m) => {
                 const isEvaluatingThisMember =
-                  evaluateOne.isPending && evaluateOne.variables?.id === m.id
+                  evaluateOne.isPending && evaluateOne.variables.id === m.id
 
                 return (
                   <MemberCard
