@@ -120,19 +120,24 @@ export default function EvaluateStaffMembers() {
 
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>
+                    <AlertDialogTitle className="text-2xl text-destructive">
                       Evaluate all staff members?
                     </AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogDescription className="text-lg">
                       This will run a paranormal evaluation on every pending
-                      staff member at once. This action cannot be undone.
+                      staff member at once.{' '}
+                      <span className="text-primary font-bold">
+                        This action cannot be undone.
+                      </span>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="rounded-none">
+                      Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                       onClick={() => evaluateAll.mutate()}
-                      className="bg-primary text-primary-foreground hover:bg-primary/90"
+                      className="bg-primary text-primary-foreground rounded-none"
                     >
                       Yes, evaluate all
                     </AlertDialogAction>
