@@ -39,6 +39,27 @@ def get_staff_members(db: Session) -> list[Staff]:
     return db_members
 
 
+def get_staff_member_without_paranormal_level(db: Session) -> list[Staff]:
+    info_logger.info("Getting staff members without paranormal level")
+    db_members = db.query(Staff).filter(Staff.paranormalLevel.is_(None)).all()
+    info_logger.info(f"Found {len(db_members)} staff members without paranormal level")
+    return db_members
+
+
+def set_staff_member_paranormal_level(
+    db: Session, member_id: uuid.UUID, level: int
+) -> Staff:
+    info_logger.info(f"Setting paranormal level for staff member: {member_id}")
+    db_member = db.query(Staff).filter(Staff.id == member_id).first()
+    if db_member is None:
+        raise NotFoundException(f"{STAFF_ENTITY} not found")
+    db_member.paranormalLevel = level
+    db.flush()
+    db.refresh(db_member)
+    info_logger.info(f"Set paranormal level for staff member: {db_member.name}")
+    return db_member
+
+
 def update_staff_member_by_id(
     db: Session, member_id: uuid.UUID, member: StaffMemberUpdate
 ) -> Staff:

@@ -2,13 +2,10 @@ import uuid
 
 from sqlalchemy import Boolean, CheckConstraint, Integer, String
 from sqlalchemy import Enum as SAEnum
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, validates
+from sqlalchemy.orm import Mapped, mapped_column, validates
 
+from src.core.database import Base
 from src.features.staff.enums import Handedness, ParanormalEventType, Sex
-
-
-class Base(DeclarativeBase):
-    pass
 
 
 class Staff(Base):

@@ -3,9 +3,14 @@ from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from src.core.settings import settings
+
+
+class Base(DeclarativeBase):
+    pass
+
 
 engine = create_engine(
     settings.DATABASE_URL, pool_pre_ping=True, pool_size=10, max_overflow=20, echo=False

@@ -20,5 +20,11 @@ class Settings(BaseSettings):
     CORS_HEADERS: list[str] = ["*"]
     API_STR: str = "/api"
 
+    # ─── ML / Seed control ───────────────────────────────────────
+    FORCE_SEED: bool = False
+    SEED_COUNT: int = 60
+    FORCE_TRAIN: bool = False
+    MODEL_PATH: str = "models/paranormal_regressor.pkl"
+
 
 settings = Settings()  # type: ignore
