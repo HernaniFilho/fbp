@@ -25,7 +25,7 @@ CRUD completo de funcionários com campos paranormais:
 - Histórico operacional (Exposição) (`numberOfMissions`, `serviceTime`)
 - Traços paranormais (Paranormal Events) (`hadParanormalEvent`, `typeOfFirstParanormalEvent`)
 
-### 2. Avaliação de Nível Paranormal — Regressão Linear ✅
+### 2. Avaliação de Nível Paranormal — Regressão Linear
 
 Prediz o `paranormalLevel` (0–100) de um agente com base em suas características.
 
@@ -47,7 +47,7 @@ paranormalLevel (0–100)
 
 > _Exemplo: agentes canhotos têm nível 20% maior; eventos do tipo `place`/`entity` aumentam 80%._
 
-### 3. Classificação de Missões — Regressão Logística 🚧
+### 3. Classificação de Missões — Regressão Logística
 
 Classifica missões em categorias ordinais:
 
@@ -56,7 +56,7 @@ Classifica missões em categorias ordinais:
 
 **Abordagem:** Regressão Logística Ordinal (ou One-vs-Rest) com features da missão + perfil médio da equipe alocada.
 
-### 4. Alocação Inteligente de Agentes 🚧
+### 4. Alocação Inteligente de Agentes
 
 Recomenda a melhor equipe para uma missão com base no histórico.
 
