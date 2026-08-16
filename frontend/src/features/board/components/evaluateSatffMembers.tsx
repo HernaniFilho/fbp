@@ -82,7 +82,7 @@ export default function EvaluateStaffMembers() {
                       className="rounded-none opacity-60 cursor-not-allowed hover:opacity-80 hover:bg-secondary/80 transition-colors"
                       disabled
                     >
-                      Evaluated — Level {m.paranormalLevel}
+                      Evaluated
                     </Button>
                   }
                 />

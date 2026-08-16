@@ -2,8 +2,7 @@ import uuid
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.features.staff.enums import ParanormalEventType
-from src.features.staff.models import Handedness, Sex
+from src.features.staff.enums import Handedness, ParanormalEventType, Sex
 
 
 class StaffMemberBase(BaseModel):

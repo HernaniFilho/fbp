@@ -22,9 +22,11 @@ function RouteComponent() {
           <TabsTrigger value="staff" className="font-semibold">
             Staff Members
           </TabsTrigger>
+          {/*
           <TabsTrigger value="missions" className="font-semibold">
             Missions
           </TabsTrigger>
+          */}
         </TabsList>
       </Tabs>
 
@@ -41,6 +43,7 @@ function RouteComponent() {
             <EvaluateStaffMembers />
           </div>
         </Activity>
+        {/*
         <Activity mode={currentTab === 'missions' ? 'visible' : 'hidden'}>
           <div className="flex flex-col gap-2">
             <h2 className="self-center text-center text-primary text-5xl md:text-6xl break-normal font-bold uppercase">
@@ -52,6 +55,7 @@ function RouteComponent() {
             <MissionAllList />
           </div>
         </Activity>
+        */}
       </div>
     </div>
   )

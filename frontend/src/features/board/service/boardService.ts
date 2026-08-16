@@ -4,11 +4,7 @@ import { apiClient } from '#/lib/api-client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createServerFn } from '@tanstack/react-start'
 import { toast } from 'sonner'
-import {
-  missionSchema,
-  missionsSchema,
-  type Mission,
-} from '../schemas/missions'
+import { missionsSchema, type Mission } from '../schemas/missions'
 
 // ─── Server Functions ────────────────────────────────────────────────────────
 
