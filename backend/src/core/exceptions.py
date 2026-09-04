@@ -5,8 +5,7 @@ from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-error_logger = logging.getLogger("uvicorn.error")
-info_logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 # --- Error codes ----------------------------------------
@@ -56,7 +55,7 @@ class NotFoundException(AppException):
             error_code=ErrorCode.NOT_FOUND,
             message=f"{resource} not found",
         )
-        error_logger.warning(f"{resource} not found")
+        logger.warning(f"{resource} not found")
 
 
 class AlreadyExistsException(AppException):
@@ -67,7 +66,7 @@ class AlreadyExistsException(AppException):
             error_code=ErrorCode.ALREADY_EXISTS,
             message=f"{resource} already exists",
         )
-        error_logger.warning(f"{resource} already exists")
+        logger.warning(f"{resource} already exists")
 
 
 class UnauthorizedException(AppException):
@@ -77,13 +76,13 @@ class UnauthorizedException(AppException):
             error_code=ErrorCode.UNAUTHORIZED,
             message=message,
         )
-        error_logger.warning(f"Unauthorized: {message}")
+        logger.warning(f"Unauthorized: {message}")
 
 
 # --- Global exception handlers ----------------------------------------
 async def app_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     assert isinstance(exc, AppException)
-    error_logger.warning(
+    logger.warning(
         "Application error",
         extra={
             "status_code": exc.status_code,
@@ -100,7 +99,7 @@ async def app_exception_handler(request: Request, exc: Exception) -> JSONRespons
 
 
 async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    error_logger.error(
+    logger.error(
         "Unhandled exception",
         extra={
             "error": str(exc),
