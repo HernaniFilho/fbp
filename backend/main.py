@@ -11,10 +11,13 @@ from src.core.exceptions import (
     app_exception_handler,
     unhandled_exception_handler,
 )
+from src.core.logging import setup_logging
 from src.core.settings import settings
 from src.features.board.route import router as board_router
 from src.features.ml.service import get_model
 from src.features.staff.route import router as staff_router
+
+setup_logging()
 
 
 @asynccontextmanager
